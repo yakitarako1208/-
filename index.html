@@ -10,43 +10,124 @@
 
 <body>
     <main class="container">
-        <p class="subtitle">FIND THE DIFFERENCE</p>
-        <h1>違和感を探せ。</h1>
-        <p class="description">
-            その文字、本当にカタカナですか？
-        </p>
 
-        <div class="status">
-            <p>STAGE <span id="stage">1</span></p>
-            <p>SCORE <span id="score">0</span></p>
-        </div>
+        <header class="site-header">
+            <p class="subtitle">FIND THE DIFFERENCE</p>
+            <h1>違和感を探せ。</h1>
+            <p class="description">
+                その文字、本当にカタカナですか？
+            </p>
+        </header>
 
-        <h2 id="stage-title">形の違いに気づく</h2>
-        <p id="instruction" class="instruction">
-            「エ」の中から「工」を探せ。
-        </p>
+        <!-- タイトル・モード選択画面 -->
+        <section id="start-screen" class="screen">
+            <h2>遊び方を選択</h2>
+            <p class="section-description">
+                好きなモードで、文字に潜む違和感を探そう。
+            </p>
 
+            <div class="mode-list">
+                <button class="mode-card" data-mode="time" type="button">
+                    <span class="mode-number">MODE 01</span>
+                    <span class="mode-icon">◷</span>
+                    <span class="mode-name">タイムアタック</span>
+                    <span class="mode-description">
+                        60秒間でどこまで進めるか。
+                    </span>
+                    <span class="mode-detail">制限時間 60秒</span>
+                </button>
 
-        <div class="timer-area">
-            <p>TIME LIMIT</p>
-            <div class="timer-track">
-                <div id="timer-bar"></div>
+                <button class="mode-card" data-mode="life" type="button">
+                    <span class="mode-number">MODE 02</span>
+                    <span class="mode-icon">♥ ♥ ♥</span>
+                    <span class="mode-name">スコアアタック</span>
+                    <span class="mode-description">
+                        ミスを避けて高得点を目指そう。
+                    </span>
+                    <span class="mode-detail">ライフ 3つ</span>
+                </button>
             </div>
-            <p id="timer">30</p>
-        </div>
+        </section>
 
-        <p id="answer-display" class="answer-display"></p>
+        <!-- ゲーム画面 -->
+        <section id="game-screen" class="screen" hidden>
+            <div class="game-top">
+                <button id="back-button" class="text-button" type="button">
+                    ← モード選択へ
+                </button>
+                <span id="mode-label" class="mode-label"></span>
+            </div>
 
+            <div class="status">
+                <div class="status-item">
+                    <span class="status-label">STAGE</span>
+                    <span id="stage" class="status-value">1</span>
+                </div>
 
-        <div id="game-board" class="game-board"></div>
+                <div class="status-item">
+                    <span class="status-label">SCORE</span>
+                    <span id="score" class="status-value">0</span>
+                </div>
 
-        <p id="message" class="message" aria-live="polite">
-            違う文字をクリックしよう。
-        </p>
+                <div class="status-item">
+                    <span id="extra-label" class="status-label">TIME</span>
+                    <span id="extra-value" class="status-value">60</span>
+                </div>
+            </div>
 
-        <button id="restart-button" type="button">
-            はじめから
-        </button>
+            <div id="timer-area" class="timer-area">
+                <div class="timer-track">
+                    <div id="timer-bar"></div>
+                </div>
+            </div>
+
+            <h2 id="stage-title">形の違いに気づく</h2>
+            <p id="instruction" class="instruction">
+                違う文字を探せ。
+            </p>
+
+            <p id="answer-display" class="answer-display" aria-live="polite"></p>
+
+            <div id="game-board" class="game-board"></div>
+
+            <p id="message" class="message" aria-live="polite">
+                違う文字をクリックしよう。
+            </p>
+        </section>
+
+        <!-- 結果画面 -->
+        <section id="result-screen" class="screen" hidden>
+            <p class="subtitle">GAME OVER</p>
+            <h2 id="result-title">お疲れさまでした！</h2>
+            <p id="result-mode" class="result-mode"></p>
+
+            <div class="result-score">
+                <span class="status-label">FINAL SCORE</span>
+                <strong id="final-score">0</strong>
+                <span>POINTS</span>
+            </div>
+
+            <div class="result-stats">
+                <div>
+                    <span class="status-label">正解数</span>
+                    <strong id="final-correct">0</strong>
+                </div>
+                <div>
+                    <span class="status-label">到達ステージ</span>
+                    <strong id="final-stage">1</strong>
+                </div>
+            </div>
+
+            <p id="result-message" class="result-message"></p>
+
+            <button id="retry-button" class="primary-button" type="button">
+                もう一度遊ぶ
+            </button>
+            <button id="home-button" class="secondary-button" type="button">
+                モード選択に戻る
+            </button>
+        </section>
+
     </main>
 
     <script src="script.js"></script>

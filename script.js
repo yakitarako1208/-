@@ -1,14 +1,28 @@
 
+const startScreen = document.getElementById("start-screen");
+const gameScreen = document.getElementById("game-screen");
+const resultScreen = document.getElementById("result-screen");
+
 const board = document.getElementById("game-board");
 const stageText = document.getElementById("stage");
 const scoreText = document.getElementById("score");
 const stageTitle = document.getElementById("stage-title");
 const instruction = document.getElementById("instruction");
 const message = document.getElementById("message");
-const restartButton = document.getElementById("restart-button");
-const timerText = document.getElementById("timer");
-const timerBar = document.getElementById("timer-bar");
 const answerDisplay = document.getElementById("answer-display");
+
+const modeLabel = document.getElementById("mode-label");
+const extraLabel = document.getElementById("extra-label");
+const extraValue = document.getElementById("extra-value");
+const timerArea = document.getElementById("timer-area");
+const timerBar = document.getElementById("timer-bar");
+
+const resultTitle = document.getElementById("result-title");
+const resultMode = document.getElementById("result-mode");
+const finalScore = document.getElementById("final-score");
+const finalCorrect = document.getElementById("final-correct");
+const finalStage = document.getElementById("final-stage");
+const resultMessage = document.getElementById("result-message");
 
 const stage1Pairs = [
     ["エ", "工"], ["ニ", "二"], ["ロ", "口"],
@@ -30,14 +44,20 @@ const stage3Pairs = [
     ...stage2Pairs
 ];
 
+// ゲームの状態
+let mode = "";
 let score = 0;
+let correctCount = 0;
 let stage = 1;
+let lives = 3;
+let timeLeft = 60;
 let targetIndex = 0;
-let answered = false;
-let timeLeft = 30;
-let timerInterval = null;
-let nextQuestionTimeout = null;
 let currentTarget = "";
+let answered = false;
+let gameOver = false;
+
+let timerInterval = null;
+let nextRoundTimeout = null;
 let cells = [];
 
 function getStage() {
@@ -60,66 +80,92 @@ function getStageTitle() {
 
 function stopTimers() {
     clearInterval(timerInterval);
-    clearTimeout(nextQuestionTimeout);
+    clearTimeout(nextRoundTimeout);
+
+    timerInterval = null;
+    nextRoundTimeout = null;
 }
 
-function updateTimerDisplay() {
-    timerText.textContent = timeLeft;
-    timerBar.style.width = `${(timeLeft / 30) * 100}%`;
+function showScreen(screen) {
+    startScreen.hidden = screen !== "start";
+    gameScreen.hidden = screen !== "game";
+    resultScreen.hidden = screen !== "result";
+}
 
+function chooseMode(selectedMode) {
+    stopTimers();
+
+    mode = selectedMode;
+    score = 0;
+    correctCount = 0;
+    stage = 1;
+    lives = 3;
+    timeLeft = 60;
+    gameOver = false;
+
+    showScreen("game");
+
+    if (mode === "time") {
+        modeLabel.textContent = "タイムアタック";
+        extraLabel.textContent = "TIME";
+        timerArea.hidden = false;
+    } else {
+        modeLabel.textContent = "スコアアタック";
+        extraLabel.textContent = "LIFE";
+        timerArea.hidden = true;
+    }
+
+    updateStatus();
+    startRound();
+    startModeTimer();
+}
+
+function updateStatus() {
+    stageText.textContent = stage;
+    scoreText.textContent = score;
+
+    if (mode === "time") {
+        extraValue.textContent = timeLeft;
+    } else {
+        extraValue.textContent = "♥".repeat(lives) + "♡".repeat(3 - lives);
+    }
+}
+
+function updateTimerBar() {
+    timerBar.style.width = `${(timeLeft / 60) * 100}%`;
     timerBar.style.background =
-        timeLeft <= 10 ? "#c7463d" : "#333";
+        timeLeft <= 10 ? "#c7463d" : "#303d35";
 }
 
-function startTimer() {
-    timeLeft = 30;
-    updateTimerDisplay();
+function startModeTimer() {
+    if (mode !== "time") return;
+
+    updateTimerBar();
 
     timerInterval = setInterval(() => {
-        timeLeft -= 1;
-        updateTimerDisplay();
+        if (gameOver) return;
+
+        timeLeft--;
+        updateStatus();
+        updateTimerBar();
 
         if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            finishByTimeout();
+            endGame("time");
         }
     }, 1000);
 }
 
-function showAnswer() {
-    cells[targetIndex]?.classList.add("reveal");
-    answerDisplay.textContent =
-        `正解は「${currentTarget}」でした。`;
-}
+function startRound() {
+    if (gameOver) return;
 
-function finishByTimeout() {
-    if (answered) return;
-
-    answered = true;
-    showAnswer();
-    message.textContent = "時間切れ！ 次の問題に進みます。";
-
-    nextQuestionTimeout = setTimeout(startGame, 1800);
-}
-
-function startGame() {
-    stopTimers();
     answered = false;
-
-    const previousStage = stage;
     stage = getStage();
 
-    stageText.textContent = stage;
-    scoreText.textContent = score;
+    updateStatus();
     stageTitle.textContent = getStageTitle();
 
-    if (stage !== previousStage) {
-        message.textContent = `STAGE ${stage} に進みました！`;
-    } else {
-        message.textContent = "違う文字をクリックしよう。";
-    }
-
     answerDisplay.textContent = "";
+    message.textContent = "違う文字をクリックしよう。";
 
     const pairs = getPairs();
     const pair = pairs[Math.floor(Math.random() * pairs.length)];
@@ -151,25 +197,7 @@ function startGame() {
         cell.setAttribute("aria-label", `文字 ${i + 1}`);
 
         cell.addEventListener("click", () => {
-            if (answered) return;
-
-            if (i === targetIndex) {
-                answered = true;
-                clearInterval(timerInterval);
-
-                score += 10;
-                scoreText.textContent = score;
-
-                cell.classList.add("correct");
-                answerDisplay.textContent =
-                    `正解！「${commonChar}」ではなく「${currentTarget}」でした。`;
-                message.textContent = "よく見つけました！";
-
-                nextQuestionTimeout = setTimeout(startGame, 1800);
-            } else {
-                cell.classList.add("wrong");
-                message.textContent = "不正解。もう一度探してみよう。";
-            }
+            handleCellClick(i, cell);
         });
 
         cells.push(cell);
@@ -178,15 +206,122 @@ function startGame() {
 
     board.style.gridTemplateColumns =
         `repeat(${columns}, minmax(0, 1fr))`;
-
-    startTimer();
 }
 
-restartButton.addEventListener("click", () => {
+function handleCellClick(index, cell) {
+    if (answered || gameOver || cell.disabled) return;
+
+    if (index === targetIndex) {
+        // 正解
+        answered = true;
+        correctCount++;
+        score += 10;
+
+        cell.classList.add("correct");
+        cell.disabled = true;
+
+        answerDisplay.textContent =
+            `正解！「${currentTarget}」でした。`;
+        message.textContent = "+10 POINTS";
+
+        const oldStage = stage;
+        stage = getStage();
+
+        if (stage > oldStage) {
+            message.textContent = `STAGE ${stage} に進みました！`;
+        }
+
+        updateStatus();
+
+        nextRoundTimeout = setTimeout(() => {
+            if (!gameOver) startRound();
+        }, 850);
+
+    } else {
+        // 不正解
+        cell.classList.add("wrong");
+        cell.disabled = true;
+
+        if (mode === "life") {
+            lives--;
+            updateStatus();
+
+            if (lives <= 0) {
+                message.textContent = "ライフがなくなりました！";
+                showAnswer();
+                nextRoundTimeout = setTimeout(() => {
+                    endGame("life");
+                }, 1200);
+                return;
+            }
+
+            message.textContent = `不正解！ ライフが減りました。残り ${lives}`;
+        } else {
+            message.textContent = "不正解！ ほかの文字を探そう。";
+        }
+    }
+}
+
+function showAnswer() {
+    cells[targetIndex]?.classList.add("reveal");
+
+    answerDisplay.textContent =
+        `正解は「${currentTarget}」でした。`;
+}
+
+function endGame(reason) {
+    if (gameOver) return;
+
+    gameOver = true;
     stopTimers();
-    score = 0;
-    stage = 1;
-    startGame();
+
+    if (reason === "time") {
+        message.textContent = "時間切れ！";
+        showAnswer();
+    }
+
+    showScreen("result");
+
+    if (reason === "time") {
+        resultTitle.textContent = "タイムアップ！";
+        resultMessage.textContent =
+            "60秒間の挑戦、お疲れさまでした。";
+    } else {
+        resultTitle.textContent = "ゲーム終了！";
+        resultMessage.textContent =
+            "最後まで挑戦してくれてありがとう。";
+    }
+
+    resultMode.textContent =
+        mode === "time" ? "タイムアタック" : "スコアアタック";
+
+    finalScore.textContent = score;
+    finalCorrect.textContent = correctCount;
+    finalStage.textContent = stage;
+}
+
+function returnToTitle() {
+    stopTimers();
+    gameOver = true;
+    showScreen("start");
+}
+
+document.querySelectorAll(".mode-card").forEach((button) => {
+    button.addEventListener("click", () => {
+        chooseMode(button.dataset.mode);
+    });
 });
 
-startGame();
+document.getElementById("retry-button").addEventListener("click", () => {
+    chooseMode(mode);
+});
+
+document.getElementById("home-button").addEventListener("click", () => {
+    returnToTitle();
+});
+
+document.getElementById("back-button").addEventListener("click", () => {
+    returnToTitle();
+});
+
+showScreen("start");
