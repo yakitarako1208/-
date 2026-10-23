@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>違和感を探せ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main class="container">
+        <p class="subtitle">FIND THE DIFFERENCE</p>
+        <h1>違和感を探せ。</h1>
+        <p class="description">
+            たくさんの「工」の中から、ひとつだけ違う文字を探してください。
+        </p>
+
+        <div class="status">
+            <p>LEVEL <span id="level">1</span></p>
+            <p>SCORE <span id="score">0</span></p>
+        </div>
+
+        <div id="game-board" class="game-board"></div>
+
+        <p id="message" class="message" aria-live="polite">
+            違う文字をクリックしよう。
+        </p>
+
+        <button id="restart-button" type="button">
+            はじめから
+        </button>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
