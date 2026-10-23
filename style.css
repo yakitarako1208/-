@@ -137,3 +137,48 @@ h2 {
         padding: 6px;
     }
 }
+
+
+.timer-area {
+    width: min(360px, 90%);
+    margin: 20px auto;
+}
+
+.timer-area p {
+    margin: 8px 0;
+    font-size: 13px;
+    color: #666;
+}
+
+.timer-track {
+    height: 8px;
+    overflow: hidden;
+    background: #deddd6;
+    border-radius: 10px;
+}
+
+#timer-bar {
+    width: 100%;
+    height: 100%;
+    background: #333;
+    border-radius: 10px;
+    transition: width 0.2s linear;
+}
+
+#timer {
+    font-size: 24px;
+    font-weight: bold;
+    color: #222;
+}
+
+.answer-display {
+    min-height: 28px;
+    margin: 12px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.cell.reveal {
+    background: #f3d58a;
+    outline: 2px solid #b78a28;
+}
