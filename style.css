@@ -74,7 +74,7 @@ h1 {
 
 .mode-list {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
@@ -487,6 +487,110 @@ h2#stage-title {
 .kind-sign {
     background: #e9f2fb;
     border-color: #3a74b5;
+}
+
+/* ===== モード4：モノの違和感 ===== */
+.obj-grid {
+    display: grid;
+    gap: 4px;
+}
+
+.obj {
+    aspect-ratio: 1;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.obj svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.obj:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.obj:disabled {
+    cursor: default;
+}
+
+.obj.correct {
+    background: rgba(123, 194, 143, 0.35);
+    box-shadow: 0 0 0 3px #7bc28f;
+}
+
+.obj.wrong {
+    background: rgba(224, 138, 128, 0.35);
+    box-shadow: 0 0 0 3px #e08a80;
+}
+
+.obj.reveal {
+    background: rgba(243, 213, 138, 0.4);
+    box-shadow: 0 0 0 3px #f3d58a;
+}
+
+/* お米：選別トレイ */
+.kind-rice {
+    border-color: #2f3a37;
+    background: #2f3a37;
+}
+
+.kind-rice .scene-place {
+    color: #c9d6d1;
+}
+
+/* 卵：パック */
+.kind-egg {
+    border-color: #b5ab99;
+    background: #c9c0b0;
+}
+
+.kind-egg .scene-place {
+    color: #5a5446;
+}
+
+.kind-egg .obj:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 時計 */
+.kind-clock {
+    background: #f1efe8;
+}
+
+.clock-face {
+    position: relative;
+    width: min(300px, 100%);
+    aspect-ratio: 1;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: inset 0 0 0 3px #2b2b28;
+}
+
+.clock-face .obj {
+    position: absolute;
+    width: 13.333%;
+    border-radius: 50%;
+}
+
+.clock-face .obj:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.clock-hands {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
 @media (max-width: 560px) {
