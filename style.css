@@ -74,7 +74,7 @@ h1 {
 
 .mode-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
 }
 
@@ -340,6 +340,155 @@ h2#stage-title {
     background: #e9e8e1;
 }
 
+/* ===== モード3：日常の違和感（場面） ===== */
+.game-board.scene-board {
+    display: block;
+    padding: 20px;
+    border: none;
+    background: transparent;
+}
+
+.scene-card {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    text-align: left;
+}
+
+.scene-place {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+}
+
+.scene-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+    margin: 6px 0;
+}
+
+.seg {
+    padding: 6px 8px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: inherit;
+    font-size: clamp(18px, 4.6vw, 26px);
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.seg:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.07);
+}
+
+.seg:disabled {
+    cursor: default;
+}
+
+.seg.wrong {
+    background: var(--wrong);
+}
+
+.seg.correct {
+    background: var(--correct);
+    outline: 2px solid #679775;
+}
+
+.seg.reveal {
+    background: var(--highlight);
+    outline: 2px solid #b78a28;
+}
+
+.seg mark {
+    padding: 0 2px;
+    border-radius: 3px;
+    background: #e8a79f;
+    color: inherit;
+}
+
+/* 場面ごとの見た目 */
+.kind-receipt {
+    background: #fbfaf5;
+    font-family: "Courier New", monospace;
+}
+
+.kind-chat {
+    background: #dfe9f0;
+}
+
+.kind-chat .seg {
+    background: #ffffff;
+    border-radius: 14px;
+}
+
+.kind-chat .seg:hover:not(:disabled) {
+    background: #f1f1f1;
+}
+
+.kind-chat .seg.wrong {
+    background: var(--wrong);
+}
+
+.kind-chat .seg.correct {
+    background: var(--correct);
+}
+
+.kind-chat .seg.reveal {
+    background: var(--highlight);
+}
+
+.kind-station {
+    border-color: #1f5f43;
+    background: #1f5f43;
+    color: #ffffff;
+}
+
+.kind-station .scene-place {
+    color: #bfe0cf;
+}
+
+.kind-station .seg:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.kind-station .seg.wrong,
+.kind-station .seg.correct,
+.kind-station .seg.reveal {
+    color: var(--text);
+}
+
+.kind-menu {
+    background: #fff8ec;
+    border-color: #e8d5b0;
+}
+
+.kind-flyer {
+    background: #fff6bf;
+    border: 3px solid #d94a3a;
+}
+
+.kind-flyer .scene-place {
+    color: #a7352a;
+}
+
+.kind-notice {
+    background: #f3f3f0;
+    border: 2px dashed #9a9a92;
+}
+
+.kind-sign {
+    background: #e9f2fb;
+    border-color: #3a74b5;
+}
+
 @media (max-width: 560px) {
     .container {
         padding-top: 28px;
@@ -350,7 +499,7 @@ h2#stage-title {
     }
 
     .mode-card {
-        min-height: 210px;
+        min-height: 190px;
     }
 
     .game-board {
